@@ -1,0 +1,7 @@
+[package]
+name = "slacky"
+version = "0.0.1"
+authors = ["yagince <straitwalk@gmail.com>"]
+
+[dependencies]
+clap = "2"
