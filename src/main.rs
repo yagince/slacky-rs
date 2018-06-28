@@ -14,6 +14,7 @@ const PKG_AUTHOR: &'static str = env!("CARGO_PKG_AUTHORS");
 struct NotifyConfig<'a> {
     pub url: &'a str,
     pub channel: Option<&'a str>,
+    pub icon: Option<&'a str>,
 }
 
 fn main() {
@@ -33,6 +34,12 @@ fn main() {
             .value_name("CHANNEL_NAME")
             .help("slack channel name. ex) #general")
             .takes_value(true))
+        .arg(Arg::with_name("icon")
+            .short("i")
+            .long("icon")
+            .value_name("ICON_NAME")
+            .help("slack icon name. ex) monkey")
+            .takes_value(true))
         .arg(Arg::with_name("MESSAGE").help("slack channel name. ex) #general"))
         .get_matches();
 
@@ -40,9 +47,11 @@ fn main() {
 
     let webhook_url = matches.value_of("webhook-url").unwrap();
     let channel = matches.value_of("channel");
+    let icon = matches.value_of("icon");
     let notify_config = NotifyConfig {
         url: webhook_url,
         channel: channel,
+        icon: icon,
     };
     let msg = matches.value_of("MESSAGE")
         .map(|x| x.to_string())
@@ -67,7 +76,7 @@ fn notify_to_slack(msg: &str, config: NotifyConfig) -> result::Result<(), slack_
     let p = PayloadBuilder::new()
         .text(msg)
         .channel(config.channel.unwrap_or(""))
-        .icon_emoji(":ohage:")
+        .icon_emoji(config.icon.map(|x| format!(":{}:", x)).unwrap_or("".to_string()))
         .build()
         .unwrap();
 
