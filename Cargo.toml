@@ -5,3 +5,4 @@ authors = ["yagince <straitwalk@gmail.com>"]
 
 [dependencies]
 clap = "2"
+slack-hook = "0.6"
