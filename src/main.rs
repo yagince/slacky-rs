@@ -11,10 +11,20 @@ const PKG_NAME: &'static str = env!("CARGO_PKG_NAME");
 const PKG_AUTHOR: &'static str = env!("CARGO_PKG_AUTHORS");
 
 #[derive(Debug)]
-struct NotifyConfig<'a> {
-    pub url: &'a str,
-    pub channel: Option<&'a str>,
-    pub icon: Option<&'a str>,
+pub struct NotifyConfig {
+    pub url: String,
+    pub channel: String,
+    pub icon: String,
+}
+
+impl NotifyConfig {
+    pub fn new(webhook_url: &str, channel: Option<&str>, icon: Option<&str>) -> NotifyConfig {
+        NotifyConfig {
+            url: webhook_url.to_string(),
+            channel: channel.map(|x| x.to_string()).unwrap_or_default(),
+            icon: icon.map(|x| format!(":{}", x)).unwrap_or_default(),
+        }
+    }
 }
 
 fn main() {
@@ -48,11 +58,7 @@ fn main() {
     let webhook_url = matches.value_of("webhook-url").unwrap();
     let channel = matches.value_of("channel");
     let icon = matches.value_of("icon");
-    let notify_config = NotifyConfig {
-        url: webhook_url,
-        channel: channel,
-        icon: icon,
-    };
+    let notify_config = NotifyConfig::new(webhook_url, channel, icon);
     let msg = matches.value_of("MESSAGE")
         .map(|x| x.to_string())
         .unwrap_or_else(|| read_stdin().expect("MESSAGE is required!!!"));
@@ -72,11 +78,11 @@ fn read_stdin() -> io::Result<String> {
 }
 
 fn notify_to_slack(msg: &str, config: NotifyConfig) -> result::Result<(), slack_hook::Error> {
-    let slack = Slack::new(config.url).unwrap();
+    let slack = Slack::new(config.url.as_ref()).unwrap();
     let p = PayloadBuilder::new()
         .text(msg)
-        .channel(config.channel.unwrap_or(""))
-        .icon_emoji(config.icon.map(|x| format!(":{}:", x)).unwrap_or("".to_string()))
+        .channel(config.channel)
+        .icon_emoji(config.icon)
         .build()
         .unwrap();
 
