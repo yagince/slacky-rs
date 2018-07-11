@@ -1,6 +1,7 @@
 extern crate slack_hook;
 
 use std::result;
+use std::convert::Into;
 
 use self::slack_hook::{Slack, PayloadBuilder};
 
@@ -12,11 +13,11 @@ pub struct NotifyConfig {
 }
 
 impl NotifyConfig {
-    pub fn new(webhook_url: &str, channel: Option<&str>, icon: Option<&str>) -> NotifyConfig {
+    pub fn new<T: Into<String>>(webhook_url: &str, channel: Option<T>, icon: Option<T>) -> NotifyConfig {
         NotifyConfig {
             url: webhook_url.to_string(),
-            channel: channel.map(|x| x.to_string()).unwrap_or_default(),
-            icon: icon.map(|x| format!(":{}:", x)).unwrap_or_default(),
+            channel: channel.map(|x| x.into()).unwrap_or_default(),
+            icon: icon.map(|x| format!(":{}:", x.into())).unwrap_or_default(),
         }
     }
 }

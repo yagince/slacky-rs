@@ -6,3 +6,6 @@ authors = ["yagince <straitwalk@gmail.com>"]
 [dependencies]
 clap = "2"
 slack-hook = "0.6"
+toml = "0.4.6"
+serde = "1.0.68"
+serde_derive = "1.0.68"
