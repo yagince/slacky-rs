@@ -54,7 +54,7 @@ fn main() {
         create_conf().expect("create conf");
     } else {
         let mut conf = read_conf().expect("read conf");
-        println!("{:?}", conf);
+        // println!("{:?}", conf);
 
         matches.value_of("webhook-url").map(|url| {
             conf.webhook_url = url.into();
@@ -69,7 +69,7 @@ fn main() {
         let msg = matches.value_of("MESSAGE")
             .map(|x| x.to_string())
             .unwrap_or_else(|| read_stdin().expect("MESSAGE is required!!!"));
-        println!("{:?}\t{:?}", notify_config, msg);
+        // println!("{:?}\t{:?}", notify_config, msg);
         slack::notify(&msg, &notify_config).expect("Slack Error");
     }
 }
